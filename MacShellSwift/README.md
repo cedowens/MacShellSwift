@@ -86,6 +86,13 @@ And here is an example of credentials being captured and sent to the server:
 
 -----------
 
+**_Next Steps_**
+
+-Build phishing payloads
+-Convert the command and control from encrypted sockets to using a RESTFUL API for C2
+
+----------
+
 **_DISCLAIMER_**
 
 This is for academic purposes and should not be used maliciously or without the appropriate authorizations and approvals.

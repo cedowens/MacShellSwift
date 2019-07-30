@@ -1,6 +1,6 @@
 # SwiftShell
 
-SwiftShell is a macOS post exploitation tool written in Swift using encrypted sockets. This tool consists of two parts: a server script and a client binary.
+SwiftShell is a proof of concept MacOS post exploitation tool written in Swift using encrypted sockets. This tool consists of two parts: a server script and a client binary. I wrote this tool to help blue teamers proactively guage detections against macOS post exploitation methods that use macOS internal calls. Red teams can also find this of use for getting ideas around using Swift for macOS post exploitation.
 
 More info below:
 

@@ -4,6 +4,7 @@ SwiftShell is a macOS post exploitation tool written in Swift using encrypted so
 
 More info below:
 
+<br><br>
 **_In Swift Code (i.e., generating the client binary)_**
 1. Open the xcodeproj file for SwiftShell in Xcode
 ![Image](pica.jpg)
@@ -16,6 +17,8 @@ More info below:
 
 4. After you set things up server side, you can then copy the binary over to the client and execute it (it is assumed you have access to the target macOS host already).
 
+
+<br><br>
 **_On C2 Server:_**
 
 1. Set up ssl (note: use a key size of at least 2048)
@@ -34,6 +37,7 @@ Usage: sudo python3 swiftshell-server.py
 ![Image](pic4.jpg)
 
 
+<br><br>
 **_Using SwiftShell_**
 
 1. After you receive a connection, you can use the "help" command on the server to get a list of built-in commands available. You can enter one of these commands or a shell command (ex: whoami or id)

@@ -4,7 +4,7 @@ SwiftShell is a macOS post exploitation tool written in Swift using encrypted so
 
 More info below:
 
-**_In Swift Code (i.e., generating the client binary) _**
+**_In Swift Code (i.e., generating the client binary)_**
 1. Open the xcodeproj file for SwiftShell in Xcode
 ![Image](pica.jpg)
 
@@ -34,7 +34,7 @@ Usage: sudo python3 swiftshell-server.py
 ![Image](pic4.jpg)
 
 
-***Using SwiftShell***
+**_Using SwiftShell_**
 
 1. After you receive a connection, you can use the "help" command on the server to get a list of built-in commands available. You can enter one of these commands or a shell command (ex: whoami or id)
 

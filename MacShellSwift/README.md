@@ -9,7 +9,7 @@ More info below:
 1. Open the xcodeproj file for SwiftShell in Xcode
 ![Image](pica.jpg)
 
-2. Edit the main.swift code as needed in Xcode, including the canary string (ensuring it matches what is in the server) and the destination IP/hostname and port.
+2. Edit the main.swift code as needed in Xcode, including the canary string if you want to set your own (just ensure it matches what is in the server) and the destination IP/hostname and port.
 ![Image](picb.jpg)
 ![Image](picba.jpg)
 

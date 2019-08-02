@@ -29,7 +29,7 @@ More info below:
 
 _*note: the server script is hard-coded to use ca.pem and ca.key, but you can change those names of course (just make sure you also change the name in the swiftshell-server.py file).
 
-2. Change the "host = '127.0.0.1'" string to the server IP address and the "port = 443" string to the listening port on the server. Also make sure the canary string matches the string in the client code. If you change the canary strig, you will also need to change the connection.recv(16) to whatever length the new string is.
+2. Change the "host = '127.0.0.1'" string to the server IP address and the "port = 443" string to the listening port on the server. Also make sure the canary string matches the string in the client code. If you change the canary string, you will also need to change the connection.recv(16) to whatever length the new canary string coming from the client is.
 ![Image](pic3.jpg)
 
 3. Save and run the server:

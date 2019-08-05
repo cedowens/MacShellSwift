@@ -1,12 +1,12 @@
-# SwiftShell
+# MacShellSwift
 
-SwiftShell is a proof of concept MacOS post exploitation tool written in Swift using encrypted sockets. This tool consists of two parts: a server script and a client binary. I wrote this tool to help blue teamers proactively guage detections against macOS post exploitation methods that use macOS internal calls. Red teams can also find this of use for getting ideas around using Swift for macOS post exploitation.
+MacShellSwift is a proof of concept MacOS post exploitation tool written in Swift using encrypted sockets. I rewrote a prior tool of mine MacShell (one of my repos) and changed the client to Swift intstead of python. This tool consists of two parts: a server script and a client binary. **I wrote this tool to help blue teamers proactively guage detections against macOS post exploitation methods that use macOS internal calls.** Red teams can also find this of use for getting ideas around using Swift for macOS post exploitation.
 
 More info below:
 
 <br><br>
 **_In Swift Code (i.e., generating the client binary)_**
-1. Open the xcodeproj file for SwiftShell in Xcode
+1. Open the xcodeproj file for MacShellSwift in Xcode
 ![Image](pica.jpg)
 
 2. Edit the main.swift code as needed in Xcode, including the canary string if you want to set your own (just ensure it matches what is in the server) and the destination IP/hostname and port.
@@ -38,7 +38,7 @@ Usage: sudo python3 swiftshell-server.py
 
 
 <br><br>
-**_Using SwiftShell_**
+**_Using MacShellSwift_**
 
 1. After you receive a connection, you can use the "help" command on the server to get a list of built-in commands available. You can enter one of these commands or a shell command (ex: whoami or id)
 

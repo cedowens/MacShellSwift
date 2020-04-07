@@ -13,7 +13,9 @@ More info below:
 ![Image](picb.jpg)
 ![Image](picba.jpg)
 
-3. From a terminal cd into the MacShellSwift directory and run: "swift build" to generate the binary. The binary will be dropped in the .build/debug folder inside of the MacShellSwift folder and will be named MacShellSwift
+3. From a terminal cd into the MacShellSwift directory and run: "swift build" to generate the binary. The binary will be dropped in the .build/debug folder inside of the MacShellSwift folder and will be named MacShellSwift 
+
+**-- NOTE:** you may have issues with the third party packages being recognized (though they are properly imported in this project). If that happens, close XCode and go to the command line, cd to the MacShellSwift parent directory and run: **"swift package generate-xcodeproj"**, which will resolve the third party packages. If you still encounter an error around xctest not being found, run **"xcode-select -s /Applications/XCode.app/Contents/Developer/"** and then run **"swift package generate-xcodeproj"**
 
 4. After you set things up server side, you can then copy the binary over to the client and execute it (it is assumed you have access to the target macOS host already).
 

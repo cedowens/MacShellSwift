@@ -44,7 +44,7 @@ Usage: sudo python3 swiftshell-server.py
 
 1. After you receive a connection, you can use the "help" command on the server to get a list of built-in commands available. You can enter one of these commands or a shell command (ex: whoami or id)
 
-![Image](pic7.jpg)
+![Image](pic7.png)
 
 Each command is pretty straightforward and contains a note on whether each is OpSec safe (i.e., easily detectable)
 

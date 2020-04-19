@@ -17,7 +17,7 @@ More info below:
 
 **-- NOTE:** you may have issues with the third party packages being recognized (though they are properly imported in this project). If that happens, close XCode and go to the command line, cd to the MacShellSwift parent directory and run: **"swift package generate-xcodeproj"**, which will resolve the third party packages. If you still encounter an error around xctest not being found, run **"xcode-select -s /Applications/XCode.app/Contents/Developer/"** and then run **"swift package generate-xcodeproj"**
 
-4. After you set things up server side, you can then copy the binary over to the client and execute it (it is assumed you have access to the target macOS host already).
+4. After you set things up server side, you can then copy the binary over to the client and execute it (it is assumed you have access to the target macOS host already). **Note: Unless you sign the binary with a valid Apple developer cert and notarize it, you will need to clear the quarantine attribute from the binary on the target client ("xattr -c <binary_name>")**
 
 
 <br><br>
@@ -59,6 +59,8 @@ And here is an example of credentials being captured and sent to the server:
 ![Image](pic9.jpg)
 
 **history** Command: Greps the bash history file on the target and then returns interesting IP addresses (ex: machines that the user may have ssh'd to)
+
+**check_osquery** Command: Check if osquery is present on the host. If so, then you can run several osquery commands (see the help menu)
 
 **clipboard** Command: Returns the results of what is currently on the user's clipboard
 

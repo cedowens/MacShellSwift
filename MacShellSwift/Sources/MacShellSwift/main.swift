@@ -69,7 +69,7 @@ do {
             try sock.write(from: "!EOF!")
         }
             
-        else if a!.contains("download"){
+        else if a!.contains("download "){
             do {
                 var cmd = a!
                 let replacethis = "download "

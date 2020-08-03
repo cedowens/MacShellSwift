@@ -60,7 +60,7 @@ And here is an example of credentials being captured and sent to the server:
 
 **history** Command: Greps the bash history file on the target and then returns interesting IP addresses (ex: machines that the user may have ssh'd to)
 
-**check_osquery** Command: Check if osquery is present on the host. If so, then you can run several osquery commands (see the help menu)
+**check_osquery** Command: Check if osquery is present on the host. If so, then you can run several osquery commands (see the help menu). This makes for an interesting way to use security tooling to pull back host data.
 
 **clipboard** Command: Returns the results of what is currently on the user's clipboard
 

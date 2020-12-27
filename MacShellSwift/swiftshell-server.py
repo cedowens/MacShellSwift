@@ -715,7 +715,7 @@ class ClientThread(Thread):
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain('ca.pem','ca.key')
-host = '127.0.0.1'
+host = '0.0.0.0'
 port = 443
 srvport = port
 session = 0
